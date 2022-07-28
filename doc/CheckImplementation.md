@@ -48,14 +48,15 @@ You can use the method stub in your implementation and concentrate on the valida
 
 | Method Name | Description |
 | ----------- | ----------- |
-| `validate_billing_sales` | Sales Order or Billing posting. The `it_data` contains only VAT IDs together with the IDs of the business partners. |
-| `validate_BP` | Business partner master data maintenance. The `it_data` contains only VAT ID together with the ID of the business partner.  |
+| `validate_billing_sales` | Sales Order or Billing posting. The `it_data` contains VAT IDs together with the IDs of the business partners. |
+| `validate_BP` | Business partner master data maintenance. The `it_data` contains VAT ID together with the ID of the business partner.  |
 | `validate_mass_check` | Online Validation for Multiple Partners report. The `it_data` contains the IDs of business partners from the database to be validated. |
 | `validate_payment` | Automatic payment report. The `it_data` contains data about the payment including all payment items. |
 | `validate_fi_post` | FI document posting. The `it_data` contains data from the posted document including one time account data. |
 | `validate_fi_change` | FI document change. The `it_data` contains data from the posted document including one time account data. |
 | `validate_mm` | MM document posting (MIRO). The `it_data` contains data from the posted document including one time account data.  |
 
+Some business process might send additional parameters in the `it_data`, e.g. whether it is possible to reuse cached results from previous validations or whether fresh results from the online service shall be fetched. The access and the availablity of such parameters is desdribed in the above given methods or in the [List of reusable objects](ReusableObjects.md). 
 
 ### Partner Identification
 In the request and in the result, there are two fields to identify the partner: partner type and partner number. 
@@ -83,7 +84,7 @@ The table has the following fields:
 | `MANDT`  | Leave this field empty. |
 | `PARTNER_TYPE`  | Partner type. See Partner identification section. |
 | `PARTNER_NUMBER`  | Partner Number. See Partner identification section. |
-| `CHECK_ID | ID` of your validation. Must be equal to the ID defined in the [Customizing](Customizing.md). |
+| `CHECK_ID` | ID of your validation. Must be equal to the ID defined in the [Customizing](Customizing.md). |
 | `CHECK_SUB_ID`  | ID of the validated value. See the Check SubID section. |
 | `TIMESTAMP`  | Leave this field empty. This field is filled in automatically with the time stamp valid at the moment of writing the record to the database.  |
 | `CHECK_RESULT`  | Result of the validation. The result must be equal to one of the values defined in the [Customizing](Customizing.md). |

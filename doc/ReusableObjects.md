@@ -27,24 +27,37 @@ cl_ovs_services=>is_valid_in_cache(
       IMPORTING 
         ev_last_check_result = DATA(lv_last_result)
         rv_is_valid = DATA(lv_valid) ).
-    IF lv_valid IS NOT INITIAL AND lv_last_result = <valid_in_cache>. 
-		" don't validate, assign an RC for VALID. 
-	ENDIF.
+IF lv_valid IS NOT INITIAL AND lv_last_result = <valid_in_cache>. 
+  " don't validate, directly assing a result code for Valid in Cache status. 
+ENDIF.
 ```
 
 The parameter `lv_valid` is set if the cache contains a value within the validity set in the [Customizing](Customizing.md). Only if the `lv_valid` is set, you can use the `lv_last_result`. Otherwise, it has an undefined value. 
 
+### Checking, whether Reusing Existing validation Results has been suppressed 
+The validation is supposed to reuse the existing results if it is possible. However, some business processes allow the users to request fresh results. You can use the following method to check whether the user requested a fresh validation. In such case, you shall not use the cached results. 
+```
+DATA(bypass_buffer) = cl_ovs_services=>is_online_validation_required( data = it_data ).
+```
+
  ### Get Message Type
  Based on the [Customizing](Customizing.md), you need to decide whether you want to display any validation message in addition to the validation result. If you decide to display a validation message, maintain the message type and message text in the Customizing. 
 ```
-	DATA(ls_msg) = cl_ovs_services=>get_message(
+DATA(ls_msg) = cl_ovs_services=>get_message(
             iv_check_id         = <check_id>
             iv_check_result     = <check_result>
             iv_integration_spot = <integration_spot> ).
-	IF ls_msg-type = 'E'.
-		MESSAGE ...
-	ENDIF. 		
+IF ls_msg-type = 'E'.
+  MESSAGE ...
+ENDIF. 		
 ```
+
+### Validate Unassigned Partners
+In the Online Validation of Multiple Partners report (OVF_MASS_CHECK), it is possible to request validation of partners, that are not assigned to the selected Company codes. Although the partner selection is done in that report, the value of the parameter migth be needed during the validation. 
+```
+DATA(validate_unnasigned_partners) = ZCL_OVS_EXAMPLE=>is_validate_all_requested( it_data = it_data ).
+```
+
 
 ### Reuse of Methods for Customizing
 If you need to access some other values maintained in the [Customizing](Customizing.md), you can reuse one of the methods defined in the `cl_ovs_customizing` class. 
@@ -61,4 +74,3 @@ Note that this class might not be suitable for REST-like based services in which
 | `close_connection` | Must be called at the end of the validation process to release all the network resources.  | 
 
 If there is an issue with the communication, the `send_sync` method throws an `cx_ovs_error`. Similarly, the `open_connection` method throws the same exception if the communication cannot be opened (wrong URL, Unauthorized etc.).
-

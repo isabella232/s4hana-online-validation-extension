@@ -118,6 +118,18 @@ PRIVATE SECTION.
       iv_integration_spot TYPE ovs_d_integration_spot
     CHANGING
       ct_result TYPE ovs_t_history.
+      
+  "! Check, whether the user requested to validate parnters not assigned to selected company code. 
+  "! This flag is supported in the Mass Check report only. The proper checkbox must be is selected.
+  "! Although the selection of partners has been done by the Mass Check report, the parameter
+  "! might be needed here.   
+  "!
+  "! @parameter it_data | Data to be validated.
+  "! @parameter rv_result | True if the user requested to validate unassigned partners. 
+  CLASS-METHODS is_validate_all_requested
+    IMPORTING
+      it_data TYPE abap_parmbind_tab
+    RETURNING VALUE(rv_result) type abap_bool. 
 ENDCLASS.
 
 
@@ -125,13 +137,6 @@ ENDCLASS.
 CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_OVS_EXAMPLE->GET_BP_FOR_CUST_VENDOR
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_PARTNER_TYPE                TYPE        OVS_D_PARTNERTYPE
-* | [--->] IV_PARTNER_NUMBER              TYPE        OVS_D_PARTNERID
-* | [<-()] RV_PARTNER                     TYPE        OVS_D_PARTNERID
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD GET_BP_FOR_CUST_VENDOR.
     IF iv_partner_type = 'V'.  " Vendor
       SELECT SINGLE partner
@@ -149,25 +154,11 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
   ENDMETHOD.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_OVS_EXAMPLE->IF_OVS_CHECK~GET_DISABLEMENT_VALUES
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IT_PARTNERS                    TYPE        OVS_T_PARTNER_KEYS
-* | [<-->] CT_VALUES                      TYPE        OVS_T_DISAB_KEYS
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD IF_OVS_CHECK~GET_DISABLEMENT_VALUES.
 
   ENDMETHOD.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Public Method ZCL_OVS_EXAMPLE->IF_OVS_CHECK~VALIDATE
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IT_DATA                        TYPE        ABAP_PARMBIND_TAB
-* | [--->] IV_INTEGRATION_SPOT            TYPE        OVS_D_INTEGRATION_SPOT
-* | [<-->] CT_RESULT                      TYPE        OVS_T_HISTORY
-* | [!CX!] CX_OVS_ERROR
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD IF_OVS_CHECK~VALIDATE.
   " @todo: As this class is just an example from https://github.com/SAP-samples/s4hana-online-validation-extension
   " Let it dump by default. Manual adaptation is needed. Check the GitHub page for more details.
@@ -210,12 +201,6 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
   ENDMETHOD.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_OVS_EXAMPLE->TO_XSTRING
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IV_DATA                        TYPE        STRING
-* | [<-()] RV_RESULT                      TYPE        XSTRING
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD TO_XSTRING.
      CALL FUNCTION 'SCMS_STRING_TO_XSTRING'
                 EXPORTING text = iv_data
@@ -223,13 +208,6 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
   ENDMETHOD.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_OVS_EXAMPLE->VALIDATE_BILLING_SALES
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IT_DATA                        TYPE        ABAP_PARMBIND_TAB
-* | [--->] IV_INTEGRATION_SPOT            TYPE        OVS_D_INTEGRATION_SPOT
-* | [<-->] CT_RESULT                      TYPE        OVS_T_HISTORY
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD VALIDATE_BILLING_SALES.
     DATA: lr_data TYPE REF TO data,
           lt_vat_table TYPE cl_ovs_vies_impl=>ty_t_vies_check_request,
@@ -265,13 +243,6 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
   ENDMETHOD.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_OVS_EXAMPLE->VALIDATE_BP
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IT_DATA                        TYPE        ABAP_PARMBIND_TAB
-* | [--->] IV_INTEGRATION_SPOT            TYPE        OVS_D_INTEGRATION_SPOT
-* | [<-->] CT_RESULT                      TYPE        OVS_T_HISTORY
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD VALIDATE_BP.
     DATA: lv_stceg  type stceg,
           lv_bpnum  type bu_partner,
@@ -327,13 +298,6 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
   ENDMETHOD.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_OVS_EXAMPLE->VALIDATE_FI_CHANGE
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IT_DATA                        TYPE        ABAP_PARMBIND_TAB
-* | [--->] IV_INTEGRATION_SPOT            TYPE        OVS_D_INTEGRATION_SPOT
-* | [<-->] CT_RESULT                      TYPE        OVS_T_HISTORY
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD VALIDATE_FI_CHANGE.
     FIELD-SYMBOLS:
       <t_bseg>  TYPE bseg_t,
@@ -383,13 +347,6 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
   ENDMETHOD.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_OVS_EXAMPLE->VALIDATE_FI_POST
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IT_DATA                        TYPE        ABAP_PARMBIND_TAB
-* | [--->] IV_INTEGRATION_SPOT            TYPE        OVS_D_INTEGRATION_SPOT
-* | [<-->] CT_RESULT                      TYPE        OVS_T_HISTORY
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD VALIDATE_FI_POST.
     TYPES: ltt_bseg TYPE TABLE OF bseg,
            ltt_bsec TYPE TABLE OF bsec.
@@ -446,13 +403,6 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
   ENDMETHOD.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_OVS_EXAMPLE->VALIDATE_MASS_CHECK
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IT_DATA                        TYPE        ABAP_PARMBIND_TAB
-* | [--->] IT_INTEGRATION_SPOT            TYPE        OVS_D_INTEGRATION_SPOT
-* | [<-->] CT_RESULT                      TYPE        OVS_T_HISTORY
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD VALIDATE_MASS_CHECK.
     DATA: par_value TYPE REF TO DATA,
           lt_partners TYPE ovs_t_partner_keys,
@@ -476,6 +426,9 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
 
     " True if a fresh validation is requested by the user. Otherwise, a previous result from the OVF_HISTORY can be returned.
     DATA(bypass_buffer) = cl_ovs_services=>is_online_validation_required( data = it_data ).
+    
+    " True if the user request validation of partners not assigned to the selected Company Code. 
+    DATA(validate_unnasigned_partners) = is_validate_all_requested( it_data = it_data ).
 
     " Here you can implement the validation and collect the results to the lt_validation_results
     " @todo: write your code here.
@@ -487,13 +440,6 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
   ENDMETHOD.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_OVS_EXAMPLE->VALIDATE_MM
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IT_DATA                        TYPE        ABAP_PARMBIND_TAB
-* | [--->] IV_INTEGRATION_SPOT            TYPE        OVS_D_INTEGRATION_SPOT
-* | [<-->] CT_RESULT                      TYPE        OVS_T_HISTORY
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD VALIDATE_MM.
     FIELD-SYMBOLS: <i_rbkp> TYPE RBKP,
                     <t_rseg> TYPE MRM_TAB_MRMRSEG,
@@ -531,13 +477,6 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
   ENDMETHOD.
 
 
-* <SIGNATURE>---------------------------------------------------------------------------------------+
-* | Instance Private Method ZCL_OVS_EXAMPLE->VALIDATE_PAYMENT
-* +-------------------------------------------------------------------------------------------------+
-* | [--->] IT_DATA                        TYPE        ABAP_PARMBIND_TAB
-* | [--->] IV_INTEGRATION_SPOT            TYPE        OVS_D_INTEGRATION_SPOT
-* | [<-->] CT_RESULT                      TYPE        OVS_T_HISTORY
-* +--------------------------------------------------------------------------------------</SIGNATURE>
   METHOD VALIDATE_PAYMENT.
     TYPES:
       ltt_f110_pbank TYPE TABLE OF f110_pbank,
@@ -648,4 +587,15 @@ CLASS ZCL_OVS_EXAMPLE IMPLEMENTATION.
     APPEND LINES OF lt_val_results TO ct_result.
 
   ENDMETHOD.
+  
+  METHOD is_validate_all_requested.
+    FIELD-SYMBOLS <validate_all> TYPE abap_bool.
+    
+    CLEAR rv_result.  
+    READ TABLE it_data WITH KEY name = 'VALIDATE_ALL'  kind = cl_abap_objectdescr=>importing ASSIGNING FIELD-SYMBOL(<is_par>).
+    CHECK sy-subrc = 0.
+    ASSIGN <is_par>-value->* TO <validate_all>.
+    rv_result = <validate_all>.
+  ENDMETHOD.
+
 ENDCLASS.

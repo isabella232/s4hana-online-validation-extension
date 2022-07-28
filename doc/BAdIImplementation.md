@@ -9,11 +9,7 @@ To create a BAdI implementation, proceed as follows:
 Enter the name of the enhancement spot and BAdI as needed. 
 
 ## Implementation Class
-You can use the following example of a implementation class as a reference when creating the BAdI:
-```
-ZCL_OVS_EXAMPLE
-```
-which can be found [here](../src/zcl_ovs_example.clas.abap). 
+You can use the example class `ZCL_OVS_EXAMPLE` [here](../src/zcl_ovs_example.clas.abap) as the implementation class or as a reference when creating the BAdI:
 
 When you have created the BAdI implementation, enter a BAdI filter (case sensitive) just as the example below:
 ```
