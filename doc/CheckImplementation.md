@@ -4,12 +4,12 @@ Once you have created the BAdI implementation, an implementation class with the 
 
 | Field Name | Description |
 | ----------- | ----------- |
-| GET_DISABLEMENT_VALUES | This method provides data for validation disablement. |
-| VALIDATE | This method performs validation of the business transaction data.  |
+| `GET_DISABLEMENT_VALUES` | This method provides data for validation disablement. |
+| `VALIDATE` | This method performs validation of the business transaction data.  |
 
 ## Disablement
 The Disablement of Online Validation for Business Partners report enables you to disable the validation of business partners' master data, such as the validation of VAT registration numbers and bank account numbers.
-For more information, see Disable Online Validation for Business Partners (https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/b2d44c1091094b5a810c2a879ee95522/596ce9e9a01244eb87d47611996e3769.html). 
+For more information, see [Disable Online Validation for Business Partners](https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/b2d44c1091094b5a810c2a879ee95522/596ce9e9a01244eb87d47611996e3769.html). 
 
 The `GET_DISABLEMENT_VALUES` method returns all values from the business partners’ master records that are available to be validated. Once you disable the validation, these values are displayed in the Disablement of Online Validation for Business Partners report. If you don’t need to disable validation of certain values, keep this method empty. 
 This method has the following parameters:
@@ -25,6 +25,8 @@ Find below more details about the Check SubID field.
 
 ## Validation
 The Online Validation routes the validation request to all BAdIs that you have configured for a business process in the  [Customizing](Customizing.md).
+You can also check directly the implementation of the methods of the class
+  example implementation class ../src/zcl_ovs_example.clas.abap can be
 
 The `IF_OVS_CHECK~VALIDATE` method performs the validation. This method has the following parameters: 
 
@@ -34,13 +36,13 @@ The `IF_OVS_CHECK~VALIDATE` method performs the validation. This method has the 
 | `it_data` | Data to be validated. The format of the data is different for each integration spot. |
 
 
-> You can check method `ZCL_CHECKID_EXAMPLE->if_ovs_check~validate` for an example on how to use the `iv_integration_spot` parameter and related values.
+> You can check method `ZCL_OVS_EXAMPLE->if_ovs_check~validate` for an example on how to use the `iv_integration_spot` parameter and related values.
 > The value of the `iv_integration_spot` determines the data for the `it_data` parameter. This class is located in this GitHub repository, not part of your SAP S/4HANA system. 
 
 ### Data Extraction for Validation
 After understanding what the `it_data` parameter is used for, you need to extract the data to be validated.
 
-Check the following methods in the `ZCL_CHECKID_EXAMPLE` class as an example of conversion from type-free `it_data` into local variables with the correct data type. The examples show extractions of all available values in `it_data`. You can delete the variables which are not needed. 
+Check the following methods in the `ZCL_OVS_EXAMPLE` class [here](../src/zcl_ovs_example.clas.abap) as an example of conversion from type-free `it_data` into local variables with the correct data type. The examples show extractions of all available values in `it_data`. You can delete the variables which are not needed. 
 
 You can use the method stub in your implementation and concentrate on the validation itself. 
 
@@ -57,7 +59,7 @@ You can use the method stub in your implementation and concentrate on the valida
 
 ### Partner Identification
 In the request and in the result, there are two fields to identify the partner: partner type and partner number. 
-In SAP S/4HANA, as a general rule, you can enter 'B' as the partner type and BUT000-PARTNER as the partner number.
+In SAP S/4HANA, as a general rule, you can enter 'B' as the partner type and `BUT000-PARTNER` as the partner number.
 
 The same is used in the Disablement function, as follows:
 
@@ -78,7 +80,7 @@ The table has the following fields:
 
 | Field name | Description |
 | ----------- | ----------- |
-| `MANDT  | Leave this field empty. |
+| `MANDT`  | Leave this field empty. |
 | `PARTNER_TYPE`  | Partner type. See Partner identification section. |
 | `PARTNER_NUMBER`  | Partner Number. See Partner identification section. |
 | `CHECK_ID | ID` of your validation. Must be equal to the ID defined in the [Customizing](Customizing.md). |
@@ -90,10 +92,10 @@ The table has the following fields:
 | `FULL_RESPONSE` | If needed, you can store here a piece or the whole response form the online service. |
 
 The partner type and partner number are usually derived from the input data. For example, when you use the Automatic Payment report, the input data contains the ID of the vendor or customer. 
-The REQUEST and the FULL_RESPONSE contain a value in the xstring form. You can use the `ZCL_CHECKID_EXAMPLE=>to_xstring` method in the example class. The History of Online Checks report displays the content of the fields in a xml viewer. Although the value can have any form, SAP recommends the usage of an xml form. The XML format is used by other SAP delivered validations. 
+The REQUEST and the FULL_RESPONSE contain a value in the xstring form. You can use the `ZCL_OVS_EXAMPLE=>to_xstring` method in the example class. The History of Online Checks report displays the content of the fields in a xml viewer. Although the value can have any form, SAP recommends the usage of an xml form. The XML format is used by other SAP delivered validations. 
 
 <!--
-This info shall be published once the way how the BAdIs are called is changed. 
+This info shall be published once the way how the BAdIs are called is changed. Currently it is planned for the future. 
 
 ## Exceptional states
 It might happen that the validation cannot be started or successfully finished. You can either return a dedicated Check Result code for a such situation or you can stop further validations. 

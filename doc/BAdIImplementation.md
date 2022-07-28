@@ -13,7 +13,7 @@ You can use the following example of a implementation class as a reference when 
 ```
 ZCL_OVS_EXAMPLE
 ```
-whcih can be found [here](../src/zcl_ovs_example.clas.abap). 
+which can be found [here](../src/zcl_ovs_example.clas.abap). 
 
 When you have created the BAdI implementation, enter a BAdI filter (case sensitive) just as the example below:
 ```
