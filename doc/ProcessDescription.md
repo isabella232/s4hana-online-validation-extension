@@ -14,7 +14,7 @@ Make sure you read through all the sections before start coding so you can reuse
 ### [4. Reusable Objects](ReusableObjects.md)
 
 
-## Useful links
-- [MD language Cheat sheet](https://www.markdownguide.org/cheat-sheet/)
-- [manage branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-branches-in-your-repository/viewing-branches-in-your-repository)
+## Useful tips
+Here you can find useful information about issues that are not directly connected to the validation development. Learn about how to solve various issues or how to get started with development tasks that are new to you. 
 
+### [Testing your iFlows](TestingiFlow.md)
